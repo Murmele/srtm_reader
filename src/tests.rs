@@ -75,8 +75,22 @@ fn file_names() {
     assert_eq!(fnames, ["N45E001.hgt", "S02E087.hgt", "N35W007.hgt"]);
 }
 #[test]
-fn read() {
+fn read_north_east() {
     let coord = Coord::new(44.4480403, 15.0733053);
+    let fname = coord.get_filename();
+    let tile = Tile::from_file(fname).unwrap();
+    assert_eq!(tile.latitude, 44);
+    assert_eq!(tile.longitude, 15);
+    assert_eq!(tile.resolution, Resolution::SRTM1);
+    assert_eq!(tile.data.len(), Resolution::SRTM1.total_len());
+
+    let elev = tile.get(coord);
+    assert_eq!(elev, Some(&258));
+}
+
+#[test]
+fn read_integer_coords_north_east() {
+    let coord = Coord::new(44.0, 15.0);
     let fname = coord.get_filename();
     let tile = Tile::from_file(fname).unwrap();
     assert_eq!(tile.latitude, 44);

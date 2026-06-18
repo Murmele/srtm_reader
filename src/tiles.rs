@@ -138,8 +138,8 @@ impl Tile {
     /// get lower-left corner's latitude and longitude
     /// it's needed for [`Tile::get_offset()`]
     fn get_origin(&self, coord: Coord) -> Coord {
-        let lat = coord.lat.trunc() + 1.; // The latitude of the lower-left corner of the tile
-        let lon = coord.lon.trunc(); // The longitude of the lower-left corner of the tile
+        let lat = coord.lat.floor(); // The latitude of the lower-left corner of the tile
+        let lon = coord.lon.floor(); // The longitude of the lower-left corner of the tile
         Coord { lat, lon }
     }
     /// calculate where this `coord` is located in this [`Tile`]
