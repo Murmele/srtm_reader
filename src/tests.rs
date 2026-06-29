@@ -102,6 +102,22 @@ fn read_integer_coords_north_east_origin() {
     assert_eq!(tile.resolution, Resolution::SRTM1);
     assert_eq!(tile.data.len(), Resolution::SRTM1.total_len());
 
+    // Check Bottom Left corner
     let elev = tile.get(coord);
     assert_eq!(elev, Some(&0)); // Inside water. Validated manually with QGis
+
+    // Check Top left corner
+    let coord = Coord::new(45.0, 15.0);
+    let elev = tile.get(coord);
+    assert_eq!(elev, Some(&858));
+
+    // Check Top right corner
+    let coord = Coord::new(45.0, 16.0);
+    let elev = tile.get(coord);
+    assert_eq!(elev, Some(&498));
+
+    // Check Bottom right corner
+    let coord = Coord::new(44.0, 16.0);
+    let elev = tile.get(coord);
+    assert_eq!(elev, Some(&239));
 }

@@ -139,20 +139,21 @@ impl Tile {
     /// get upper-left corner's latitude and longitude
     /// it's needed for [`Tile::get_offset()`]
     /// The upper left corner is the value at (0, 0) in the
-    /// data vector
-    fn get_origin(&self, coord: Coord) -> Coord {
-        let lat = coord.lat.trunc() + 1.; // The latitude of the upper-left corner of the tile
-        let lon = coord.lon.trunc(); // The longitude of the upper-left corner of the tile
+    /// data vector.
+    fn get_data_origin(&self) -> Coord {
+        let lat = self.latitude as f64 + 1.;
+        let lon = self.longitude as f64;
         Coord { lat, lon }
     }
     /// calculate where this `coord` is located in this [`Tile`]
     fn get_offset(&self, coord: Coord) -> (usize, usize) {
-        let origin = self.get_origin(coord);
+        let origin = self.get_data_origin();
         // eprintln!("origin: ({}, {})", origin.0, origin.1);
-        let extent = self.resolution.extent() as f64;
+        // `extent` samples span exactly 1 degree, so there are `extent - 1` intervals between them
+        let intervals = (self.resolution.extent() - 1) as f64;
 
-        let row = ((origin.lat - coord.lat) * extent) as usize;
-        let col = ((coord.lon - origin.lon) * extent) as usize;
+        let row = ((origin.lat - coord.lat) * intervals) as usize;
+        let col = ((coord.lon - origin.lon) * intervals) as usize;
         (row, col)
     }
 }
