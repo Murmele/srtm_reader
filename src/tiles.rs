@@ -1,5 +1,6 @@
 use super::{Coord, Error};
 use crate::resolutions::Resolution;
+use crate::resolutions::ELEVATION_RESOLUTION_BYTES;
 use std::{
     fs::File,
     io::{self, Read},
@@ -88,7 +89,7 @@ impl Tile {
 
     /// extract the heights from the `hgt` content
     pub fn parse_hgt(mut reader: impl Read, res: Resolution) -> io::Result<Vec<i16>> {
-        let mut buffer = vec![0; res.total_len() * 2];
+        let mut buffer = vec![0; res.total_len() * ELEVATION_RESOLUTION_BYTES];
         reader.read_exact(&mut buffer)?;
         let mut elevations = Vec::with_capacity(res.total_len());
         for chunk in buffer.chunks_exact(2) {
@@ -135,11 +136,13 @@ impl Tile {
         );
         y * self.resolution.extent() + x
     }
-    /// get lower-left corner's latitude and longitude
+    /// get upper-left corner's latitude and longitude
     /// it's needed for [`Tile::get_offset()`]
+    /// The upper left corner is the value at (0, 0) in the
+    /// data vector
     fn get_origin(&self, coord: Coord) -> Coord {
-        let lat = coord.lat.trunc() + 1.; // The latitude of the lower-left corner of the tile
-        let lon = coord.lon.trunc(); // The longitude of the lower-left corner of the tile
+        let lat = coord.lat.trunc() + 1.; // The latitude of the upper-left corner of the tile
+        let lon = coord.lon.trunc(); // The longitude of the upper-left corner of the tile
         Coord { lat, lon }
     }
     /// calculate where this `coord` is located in this [`Tile`]

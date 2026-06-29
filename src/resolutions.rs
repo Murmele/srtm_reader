@@ -1,5 +1,6 @@
 /// this many rows and columns are there in a standard SRTM1 file
 const EXTENT: usize = 3600;
+pub(crate) const ELEVATION_RESOLUTION_BYTES: usize = 2;
 
 /// the available resulutions of the SRTM data, in arc seconds
 #[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Debug, Default)]
@@ -30,11 +31,11 @@ impl TryFrom<u64> for Resolution {
 
     fn try_from(len: u64) -> Result<Self, Self::Error> {
         let len = usize::try_from(len).map_err(|_| ())?;
-        if len == Resolution::SRTM05.total_len() * 2 {
+        if len == Resolution::SRTM05.total_len() * ELEVATION_RESOLUTION_BYTES {
             Ok(Resolution::SRTM05)
-        } else if len == Resolution::SRTM1.total_len() * 2 {
+        } else if len == Resolution::SRTM1.total_len() * ELEVATION_RESOLUTION_BYTES {
             Ok(Resolution::SRTM1)
-        } else if len == Resolution::SRTM3.total_len() * 2 {
+        } else if len == Resolution::SRTM3.total_len() * ELEVATION_RESOLUTION_BYTES {
             Ok(Resolution::SRTM3)
         } else {
             eprintln!("unknown filesize: {len}");
